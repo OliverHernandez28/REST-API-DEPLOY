@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        article {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script type="module">
+        fetch('http://localhost:3000/movies').then(res => res.json()).then(movies => {
+            const html = movies.map(m => {
+                return `
+                <article data-id="${m.id}">
+                    <h2>${m.title}</h2>
+                    <img src="${m.poster}" alt="${m.title}">
+                    <p>${m.year}</p>
+                    <button>Eliminar</button>
+                </article>
+                `
+            }).join('');
+            console.log(html);
+            document.querySelector('main').innerHTML = html
+            document.addEventListener('click', e => {
+                if (e.target.tagName === 'BUTTON') {
+                    const article = e.target.closest('article');
+                    const id = article.dataset.id;
+                    fetch(`http://localhost:3000/movies/${id}`, {
+                        method: 'DELETE'
+                    }).then(() => {
+                        article.remove();
+                    })
+                }
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <main></main>
+</body>
+
+</html>
